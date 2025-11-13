@@ -84,7 +84,8 @@ h4 {
 
 .daytime {
     display: inline-flex;
-    padding: 0rem 0.5rem;
+    padding: 0.5rem 0.5rem;
+    margin-bottom: 0.3rem;
     margin-left: 0.5rem;
     justify-content: center;
     align-items: center;
@@ -135,4 +136,53 @@ h6 {
 
 .fa-regular.fa-star {
     color: #DBC554;
+    margin-left: 0.3rem;
+}
+
+#profilebtn {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: inherit;
+    font: inherit;
+    border-radius: 0;
+    appearance: none;
+    cursor: pointer;
+}
+
+.favoritebtn {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: inherit;
+    font: inherit;
+    border-radius: 0;
+    appearance: none;
+    cursor: pointer;
+}
+
+.locationbtn {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: inherit;
+    font: inherit;
+    border-radius: 0;
+    appearance: none;
+    cursor: pointer;
+}
+
+.menubtn {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: inherit;
+    font: inherit;
+    border-radius: 0;
+    appearance: none;
+    cursor: pointer;
 }
