@@ -32,6 +32,27 @@ nav i {
     align-items: center;
 }
 
+.bottombar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #5A5377;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.bottombar a {
+    cursor: pointer;
+}
+
+.bottombar i {
+    color: white;
+}
+
 h1 {
     color: #000;
     text-align: center;
