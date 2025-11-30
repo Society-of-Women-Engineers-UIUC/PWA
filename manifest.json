@@ -1,6 +1,7 @@
 {
     "name": "Society of Women Engineers",
     "short_name": "SWE",
+    "prefer_related_applications": true,
     "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#7D6890",
