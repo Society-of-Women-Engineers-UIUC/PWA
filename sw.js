@@ -1,5 +1,5 @@
-const staticCacheName = 'site-static-v2';
-const dynamicCacheName = 'site-dynamic-v1';
+const staticCacheName = 'site-static-v7';
+const dynamicCacheName = 'site-dynamic-v7';
 const assets = [
     '/',
     '/index.html',
@@ -7,10 +7,21 @@ const assets = [
     '/js/app.js',
     '/js/script.js',
     '/css/styles.css',
+    '/css/loginForm.css',
     '/img/icons/icon-48x48.png',
     'https://kit.fontawesome.com/e72ace8b45.js',
     'https://ka-f.fontawesome.com'
 ];
+
+const limitCacheSize = (name, size) => {
+    caches.open(name).then(cache => {
+        cache.keys().then(keys => {
+            if (keys.length > size) {
+                cache.delete(keys[0]).then(limitCacheSize(name, size));
+            }
+        })
+    })
+};
 
 // listening for service worker
 self.addEventListener('install', evt => {

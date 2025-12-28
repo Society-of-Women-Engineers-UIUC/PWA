@@ -1,0 +1,62 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        <title>SWE App</title>
+        <link rel="icon" type="image/x-icon" href="/img/icons/icon-48x48.png">
+
+        <link href='https://fonts.googleapis.com/css?family=Pridi' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
+        <script src="https://kit.fontawesome.com/e72ace8b45.js" crossorigin="anonymous"></script>
+
+        <!-- link stylesheet and js file-->
+        <link href="/css/loginForm.css" rel="stylesheet">
+        <script type="module" src="/js/register.js" defer></script>
+
+        <!-- link the mainfest-->
+        <link rel="manifest", href="/manifest.json">
+
+        <!-- ios support -->
+        <link rel="apple-touch-icon" href="/img/icons/icon-96x96.png">
+        <meta name="apple-mobile-web-app-status-bar" content="#5A5377">
+
+    </head>
+    <body>
+        <nav>
+            <button class="menubtn"><i class="fa-solid fa-bars fa-lg"></i></button>
+            <div class="navframe">
+                <a id="profilebtn" href="/pages/profile.html"><i class="fa-regular fa-circle-user fa-lg"></i></a>
+            </div>
+        </nav>
+        
+        <div class="loginBox">
+            <form action="#">
+                <h1>Create Account</h1>
+
+                <label for="username"> Email
+                    <input type="email" placeholder="Input email" id="email" required>
+                </label>
+
+                <label for="username"> Password
+                    <input type="password" placeholder="Create password" id="password" required>
+                </label>
+
+                <button type="submit" id="submit">Create Account</button>
+            </form>
+            
+            <div class="form">
+                <p>Alreadly have an account? <a href="login.html">Login!</a></p>
+            </div>
+        </div>
+        
+        <div class="bottombar">
+            <a href="/pages/directory.html"><i class="fa-solid fa-users fa-lg"></i></a>
+            <a><i class="fa-solid fa-calendar fa-lg" style="color: #E9DCF5;"></i></a>
+            <a href="/pages/points.html"><i class="fa-brands fa-web-awesome fa-lg"></i></a>
+            <a href="/pages/profile.html"><i class="fa-solid fa-gear fa-lg"></i></a>
+        </div>
+        <script src="/js/app.js"></script>
+    </body>
+</html>
