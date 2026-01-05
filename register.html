@@ -13,7 +13,7 @@
 
         <!-- link stylesheet and js file-->
         <link href="/css/loginForm.css" rel="stylesheet">
-        <script type="module" src="/js/register.js" defer></script>
+        <script type="module" src="/js/auth.js" defer></script>
 
         <!-- link the mainfest-->
         <link rel="manifest", href="/manifest.json">
@@ -39,11 +39,15 @@
                     <input type="email" placeholder="Input email" id="email" required>
                 </label>
 
-                <label for="username"> Password
+                <label> Password
                     <input type="password" placeholder="Create password" id="password" required>
                 </label>
 
-                <button type="submit" id="submit">Create Account</button>
+                <label> Committee
+                    <input placeholder="Enter committee name if applicable" id="committee">
+                </label>
+
+                <button type="submit" id="signup">Create Account</button>
             </form>
             
             <div class="form">
