@@ -1,9 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { 
     getFirestore, collection, getDocs
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+import { setupEvents } from './script.js';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -21,6 +23,23 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const auth = getAuth();
+
+
+if (document.getElementById('eventsList')) {
+    const events = collection(db, 'events');
+    getDocs(events).then((snapshot => {
+        setupEvents(snapshot.docs);
+    }))
+}
+
+// listen for auth status changes
+auth.onAuthStateChanged(user => {
+    if (user) {
+        console.log('user logged in: ', user);
+    } else {
+        console.log('user logged out');
+    }
+})
 
 const signup = document.getElementById("signup");
 
