@@ -15,6 +15,7 @@
         <link href="/css/styles.css" rel="stylesheet">
         <script type="module" src="/js/users.js"></script>
         <script type="module" src="/js/auth.js"></script>
+        <script type="module" src="/js/profile.js"></script>
 
         <!-- link the mainfest-->
         <link rel="manifest", href="/manifest.json">
@@ -28,15 +29,15 @@
         <nav>
             <button class="menubtn"><i class="fa-solid fa-bars fa-lg"></i></button>
             <div class="navframe">
-                <p>Login to view points</p>
                 <a id="profilebtn" href="/pages/profile.html"><i class="fa-regular fa-circle-user fa-lg"></i></a>
             </div>
         </nav>
 
         <h1>Profile</h1>
-        <p>Display name and point total here</p>
-        <p>Past events attended?</p>
-        <button id="logout">Logout</button>
+        <div id="profileBody">
+            <p>Display name and past events attended here</p>
+            <button id="logout">Logout</button>
+        </div>
 
         <div class="bottombar">
             <a href="directory.html"><i class="fa-solid fa-users fa-lg"></i></a>

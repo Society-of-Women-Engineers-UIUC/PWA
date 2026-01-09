@@ -1,11 +1,31 @@
 const eventsList = document.getElementById("eventsList");
+const loggedOutLinks = document.getElementsByClassName("logged-out");
+const loggedInLinks = document.getElementsByClassName("logged-in");
+
+console.log(loggedInLinks.length);
+console.log(loggedOutLinks.length);
+
+export const setupUI = (user) => {
+    if (user) {
+        // toggle UI elements
+        var item1 = loggedInLinks[0]
+        item1.style.display = 'block';
+        var item2 = loggedOutLinks[0]
+        item2.style.display = 'none';
+    } else {
+        // toggle UI elements
+        var item1 = loggedInLinks[0]
+        item1.style.display = 'none';
+        var item2 = loggedOutLinks[0]
+        item2.style.display = 'block';
+    }
+}
 
 // setup events
 export const setupEvents = (data) => {
     let html = '';
     data.forEach( doc => {
         const event = doc.data();
-        console.log(event);
         const eventCard = `
             <div class="event-cards">
                 <div class="card">

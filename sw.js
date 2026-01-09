@@ -1,5 +1,5 @@
-const staticCacheName = 'site-static-v40';
-const dynamicCacheName = 'site-dynamic-v40';
+const staticCacheName = 'site-static-v43';
+const dynamicCacheName = 'site-dynamic-v43';
 const assets = [
     '/',
     '/index.html',
@@ -26,12 +26,12 @@ const limitCacheSize = (name, size) => {
 // listening for service worker
 self.addEventListener('install', evt => {
     //console.log('service worker has been installed');
-    evt.waitUntil(
-        caches.open(staticCacheName).then(cache => {
-            console.log('caching assests');
-            cache.addAll(assets);
-        })
-    )
+    // evt.waitUntil(
+    //     caches.open(staticCacheName).then(cache => {
+    //         console.log('caching assests');
+    //         cache.addAll(assets);
+    //     })
+    // )
 });
 
 // listening for active service worker

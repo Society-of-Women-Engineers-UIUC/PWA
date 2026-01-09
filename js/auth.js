@@ -5,7 +5,7 @@ import {
     getFirestore, collection, getDocs
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-import { setupEvents } from './script.js';
+import { setupEvents, setupUI } from './script.js';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -24,6 +24,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const auth = getAuth();
 
+const profileBody = document.getElementById("profileBody");
 
 if (document.getElementById('eventsList')) {
     const events = collection(db, 'events');
@@ -36,8 +37,14 @@ if (document.getElementById('eventsList')) {
 auth.onAuthStateChanged(user => {
     if (user) {
         console.log('user logged in: ', user);
+        if (document.getElementById('eventsList')) {
+            setupUI(user);
+        }
     } else {
         console.log('user logged out');
+        if (document.getElementById('eventsList')) {
+            setupUI(user);
+        }
     }
 })
 
@@ -69,12 +76,15 @@ if (logout != null) {
         e.preventDefault();
         auth.signOut().then(() => {
             console.log("User logged out");
+            window.location.href = "../index.html";
         })
     })
 }
 
 const login = document.getElementById("login");
 if (login != null) {
+    console.log("login not = null");
+
     login.addEventListener("click", function(event) {
     event.preventDefault();
 
