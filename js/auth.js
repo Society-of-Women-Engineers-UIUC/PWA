@@ -6,6 +6,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 import { setupEvents, setupUI } from './script.js';
+import { setupUsers } from './directory.js';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -40,10 +41,19 @@ auth.onAuthStateChanged(user => {
         if (document.getElementById('eventsList')) {
             setupUI(user);
         }
+        else if (document.getElementById('directory-container')) {
+            const users = collection(db, 'users');
+            getDocs(users).then((snapshot => {
+                setupUsers(snapshot.docs);
+            }))
+        }
     } else {
         console.log('user logged out');
         if (document.getElementById('eventsList')) {
             setupUI(user);
+        }
+        else if (document.getElementById('directory-container')) {
+            setupUsers(null);
         }
     }
 })
