@@ -12,12 +12,17 @@ export const setupUsers = (data) => {
     } else {
         data.forEach( doc => {
             const user = doc.data();
+            console.log(user);
             const userCard = `
                 <div class="user-cards">
                     <div class="card">
-                        <div class="frame1">
-                            <h4>${user.name}</h4>
+                        <div class="row1">
+                            <h4>${user.committee} - ${user.chair}</h4>
                         </div>
+                        <div class="row2">
+                            <h4>${user.name} - ${user.email}</h4>
+                        </div>
+                    </div>
                 </div>
             `;
 
