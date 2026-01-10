@@ -38,7 +38,6 @@ if (document.getElementById('eventsList')) {
 auth.onAuthStateChanged(user => {
     if (user) {
         if (document.getElementById('eventsList')) {
-            setupUI(user);
         }
         else if (document.getElementById('directory-container')) {
             const users = collection(db, 'users');
@@ -49,12 +48,12 @@ auth.onAuthStateChanged(user => {
     } else {
         console.log('user logged out');
         if (document.getElementById('eventsList')) {
-            setupUI(user);
         }
         else if (document.getElementById('directory-container')) {
             setupUsers(null);
         }
     }
+    setupUI(user);
 })
 
 const signup = document.getElementById("signup");

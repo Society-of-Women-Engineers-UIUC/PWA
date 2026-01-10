@@ -7,7 +7,7 @@ export const setupUsers = (data) => {
     
     if (data == null) {
         html = `
-            <h1>Login to view directory</h1>
+            <h2>Login to view directory</h2>
         `;
     } else {
         data.forEach( doc => {

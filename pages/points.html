@@ -13,7 +13,7 @@
 
         <!-- link stylesheet and js file-->
         <link href="/css/styles.css" rel="stylesheet">
-        <script src="/js/script.js" defer></script>
+        <script src="/js/auth.js" type="module"></script>
 
         <!-- link the mainfest-->
         <link rel="manifest", href="/manifest.json">
@@ -27,7 +27,8 @@
         <nav>
             <button class="menubtn"><i class="fa-solid fa-bars fa-lg"></i></button>
             <div class="navframe">
-                <a id="profilebtn" href="/pages/profile.html"><i class="fa-regular fa-circle-user fa-lg"></i></a>
+                <a class="logged-in" id="profilebtn" href="/pages/profile.html"><i class="fa-regular fa-circle-user fa-lg"></i></a>
+                <a class="logged-out" id="profilebtn" href="/login.html"><i class="fa-regular fa-circle-user fa-lg"></i></a>
             </div>
         </nav>
 
