@@ -2,8 +2,6 @@ const directoryContainer = document.getElementById("directory-container");
 
 export const setupUsers = (data) => {
     let html = '';
-
-    console.log('setupUsers running');
     
     if (data == null) {
         html = `

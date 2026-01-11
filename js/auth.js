@@ -7,6 +7,7 @@ import {
 
 import { setupEvents, setupUI } from './script.js';
 import { setupUsers } from './directory.js';
+import { setupPoints } from './points.js';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -38,6 +39,7 @@ if (document.getElementById('eventsList')) {
 auth.onAuthStateChanged(user => {
     if (user) {
         if (document.getElementById('eventsList')) {
+
         }
         else if (document.getElementById('directory-container')) {
             const users = collection(db, 'users');
@@ -45,12 +47,20 @@ auth.onAuthStateChanged(user => {
                 setupUsers(snapshot.docs);
             }))
         }
+        else if (document.getElementById('points-container')) {
+            console.log('In points-container if statement');
+            setupPoints(user);
+        }
     } else {
         console.log('user logged out');
         if (document.getElementById('eventsList')) {
         }
         else if (document.getElementById('directory-container')) {
             setupUsers(null);
+        }
+        else if (document.getElementById('points-container')) {
+            console.log('In points-container if statement');
+            setupPoints(user);
         }
     }
     setupUI(user);
