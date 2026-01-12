@@ -1,3 +1,6 @@
+import { db } from './firebase.js';
+import { doc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
+
 const eventsList = document.getElementById("eventsList");
 const loggedOutLinks = document.getElementsByClassName("logged-out");
 const loggedInLinks = document.getElementsByClassName("logged-in");
@@ -24,6 +27,7 @@ export const setupUI = (user) => {
 // setup events
 export const setupEvents = (data) => {
     let html = '';
+
     data.forEach( doc => {
         const event = doc.data();
         const eventCard = `
@@ -40,7 +44,7 @@ export const setupEvents = (data) => {
                         <div class="far-right">
                             <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
                             <button class="favoritebtn"><i class="fa-regular fa-star fa-lg"></i></button>
-                            <button class="rsvpbtn">RSVP</button>
+                            <button class="rsvpbtn" id="${doc.id}">RSVP</button>
                         </div>
                     </div>
                 </div>
@@ -60,13 +64,21 @@ export const setupEvents = (data) => {
     el.addEventListener('click', function() {
         const check = document.createElement('i');
         check.classList.add('fa-solid', 'fa-check', 'fa-lg');
+        const id = el.id;
+        const docRef = doc(db, "events", id);
 
         if (this.innerHTML == "RSVP") {
+            updateDoc(docRef, {
+                attending: increment(1)
+            });
             alert("You are RSVPed! Can't wait to see you there")
             this.style.backgroundColor = '#DCF7E9';
             this.style.color = '#107953';
             this.appendChild(check);
         } else {
+            updateDoc(docRef, {
+                attending: increment(-1)
+            });
             this.style.backgroundColor = '#E9DCF5';
             this.style.color = '#5A5377';
             alert("You have UnRSVPed");
