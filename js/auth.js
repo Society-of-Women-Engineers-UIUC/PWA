@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { 
-    collection, getDocs
+    collection, getDocs, addDoc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 import { setupEvents, setupUI } from './script.js';
@@ -55,17 +55,25 @@ if (signup != null) {
     signup.addEventListener("click", function(event) {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
+    const em = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const commit = document.getElementById("committee").value;
+    const na = document.getElementById("name").value;
+    const chr = document.getElementById("chair").value;
 
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, em, password)
         .then((userCredential) => {
             // Signed up 
             const user = userCredential.user;
-            window.location.href = "index.html";
-            return db.collection('users').doc(userCredential.user.uid).set({
-                committee: commit
+
+            addDoc(collection(db, 'users'), {
+                email: em,
+                committee: commit,
+                chair: chr,
+                name: na
+            })
+            .then(doc => {
+                window.location.href = "index.html";
             });
         })
     });
