@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { 
-    collection, getDocs, addDoc
+    collection, getDocs, doc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 import { setupEvents, setupUI } from './script.js';
@@ -9,12 +9,15 @@ import { setupUsers } from './directory.js';
 import { setupPoints } from './points.js';
 import { db, auth } from './firebase.js';
 
+var uid = null;
+
 const profileBody = document.getElementById("profileBody");
 
 if (document.getElementById('eventsList')) {
     const events = collection(db, 'events');
     getDocs(events).then((snapshot => {
-        setupEvents(snapshot.docs);
+        console.log(uid);
+        setupEvents(snapshot.docs, uid);
     }))
 }
 
@@ -34,6 +37,7 @@ auth.onAuthStateChanged(user => {
             console.log('In points-container if statement');
             setupPoints(user);
         }
+        uid = user.uid;
     } else {
         console.log('user logged out');
         if (document.getElementById('eventsList')) {
@@ -45,6 +49,8 @@ auth.onAuthStateChanged(user => {
             console.log('In points-container if statement');
             setupPoints(user);
         }
+
+        uid = null;
     }
     setupUI(user);
 })
@@ -66,7 +72,7 @@ if (signup != null) {
             // Signed up 
             const user = userCredential.user;
 
-            addDoc(collection(db, 'users'), {
+            setDoc(doc(db, 'users', user.uid), {
                 email: em,
                 committee: commit,
                 chair: chr,
@@ -103,9 +109,8 @@ if (login != null) {
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => { 
             const user = userCredential.user;
-            console.log('User logged in auth');
+
             window.location.href = "index.html";
-            // ...
         })
         .catch((error) => {
             const errorCode = error.code;
