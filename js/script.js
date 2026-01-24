@@ -39,49 +39,54 @@ export const setupEvents = async (data, uid) => {
         data.forEach( doc => {
             const event = doc.data();
             var eventCard = ``;
+    
+            let eventTime = event.DayTime.toDate()
+            let curTime = new Date()
             
-            if (attending.includes(doc.id)) {
-                eventCard = `
-                    <div class="event-cards">
-                        <div class="card">
-                            <div class="frame1">
-                                <h4>${event.Title}</h4>
-                                <div class="daytime">
-                                    <p class="daytimetext">${event.DayTime}</p>
+            if (curTime < eventTime) {
+                if (attending.includes(doc.id)) {
+                    eventCard = `
+                        <div class="event-cards">
+                            <div class="card">
+                                <div class="frame1">
+                                    <h4>${event.Title}</h4>
+                                    <div class="daytime">
+                                        <p class="daytimetext">${eventTime.toLocaleString()}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="frame1">
-                                <h6>${event.Committee}</h6>
-                                <div class="far-right">
-                                    <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                    <button class="favoritebtn"><i class="fa-regular fa-star fa-lg"></i></button>
-                                    <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                eventCard = `
-                    <div class="event-cards">
-                        <div class="card">
-                            <div class="frame1">
-                                <h4>${event.Title}</h4>
-                                <div class="daytime">
-                                    <p class="daytimetext">${event.DayTime}</p>
-                                </div>
-                            </div>
-                            <div class="frame1">
-                                <h6>${event.Committee}</h6>
-                                <div class="far-right">
-                                    <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                    <button class="favoritebtn"><i class="fa-regular fa-star fa-lg"></i></button>
-                                    <button class="rsvpbtn" id="${doc.id}">RSVP</button>
+                                <div class="frame1">
+                                    <h6>${event.Committee}</h6>
+                                    <div class="far-right">
+                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                        <button class="favoritebtn"><i class="fa-regular fa-star fa-lg"></i></button>
+                                        <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    eventCard = `
+                        <div class="event-cards">
+                            <div class="card">
+                                <div class="frame1">
+                                    <h4>${event.Title}</h4>
+                                    <div class="daytime">
+                                        <p class="daytimetext">${eventTime.toLocaleString()}</p>
+                                    </div>
+                                </div>
+                                <div class="frame1">
+                                    <h6>${event.Committee}</h6>
+                                    <div class="far-right">
+                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                        <button class="favoritebtn"><i class="fa-regular fa-star fa-lg"></i></button>
+                                        <button class="rsvpbtn" id="${doc.id}">RSVP</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
 
             html += eventCard;
