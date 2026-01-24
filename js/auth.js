@@ -29,7 +29,8 @@ auth.onAuthStateChanged(user => {
         }
         else if (document.getElementById('directory-container')) {
             const users = collection(db, 'users');
-            getDocs(users).then((snapshot => {
+            const quer = query(users, orderBy("committee", "asc"));
+            getDocs(quer).then((snapshot => {
                 setupUsers(snapshot.docs);
             }))
         }
