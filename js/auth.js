@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { 
-    collection, getDocs, doc, setDoc
+    collection, getDocs, doc, setDoc, query, orderBy
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 import { setupEvents, setupUI } from './script.js';
@@ -15,8 +15,8 @@ const profileBody = document.getElementById("profileBody");
 
 if (document.getElementById('eventsList')) {
     const events = collection(db, 'events');
-    getDocs(events).then((snapshot => {
-        console.log(uid);
+    const q = query(events, orderBy("DayTime", "asc"));
+    getDocs(q).then((snapshot => {
         setupEvents(snapshot.docs, uid);
     }))
 }
