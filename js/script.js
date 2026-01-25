@@ -25,6 +25,13 @@ export const setupUI = (user) => {
 // setup events
 export const setupEvents = async (data, uid) => {
     var html = '';
+    const options = {
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+    const formatter = new Intl.DateTimeFormat(undefined, options);
 
     // var attending = null;
     if (uid != null) {
@@ -32,21 +39,15 @@ export const setupEvents = async (data, uid) => {
         const aSnap =  await getDocs(al)
         
         const attending = aSnap.docs.map(doc => doc.id);
-        const options = {
-                month: 'short',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-        const formatter = new Intl.DateTimeFormat(undefined, options);
 
         data.forEach( doc => {
             const event = doc.data();
             var eventCard = ``;
     
             let eventTime = event.DayTime.toDate();
-            let curTime = new Date();
             let formattedTime = formatter.format(eventTime);
+            
+            let curTime = new Date();
             
             if (curTime < eventTime) {
                 if (attending.includes(doc.id)) {
@@ -71,6 +72,7 @@ export const setupEvents = async (data, uid) => {
                         </div>
                     `;
                 } else {
+                    console.log(formattedTime);
                     eventCard = `
                         <div class="event-cards">
                             <div class="card">
@@ -156,13 +158,16 @@ export const setupEvents = async (data, uid) => {
     } else {
         data.forEach( doc => {
             const event = doc.data();
+            let eventTime = event.DayTime.toDate();
+            let formattedTime = formatter.format(eventTime);
+            
             const eventCard = `
                 <div class="event-cards">
                     <div class="card">
                         <div class="frame1">
                             <h4>${event.Title}</h4>
                             <div class="daytime">
-                                <p class="daytimetext">${event.DayTime}</p>
+                                <p class="daytimetext">${formattedTime}</p>
                             </div>
                         </div>
                         <div class="frame1">
