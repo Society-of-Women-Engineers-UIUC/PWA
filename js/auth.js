@@ -4,14 +4,19 @@ import {
     collection, getDocs, doc, setDoc, query, orderBy
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-import { setupEvents, setupUI } from './script.js';
+import { setupEvents, setupAttendingEvents, setupUI } from './script.js';
 import { setupUsers } from './directory.js';
 import { setupPoints } from './points.js';
+import { setupProfile } from './profile.js';
 import { db, auth } from './firebase.js';
 
 var uid = null;
 
 const profileBody = document.getElementById("profileBody");
+
+
+const rsvp_filter = document.getElementById("rsvped_filter");
+var rsvp_filter_state = false
 
 if (document.getElementById('eventsList')) {
     const events = collection(db, 'events');
@@ -19,15 +24,36 @@ if (document.getElementById('eventsList')) {
     getDocs(q).then((snapshot => {
         setupEvents(snapshot.docs, uid);
     }))
+
+    rsvp_filter.addEventListener('click', function() {
+    if (!rsvp_filter_state) {
+        this.style.backgroundColor = '#DCF7E9';
+        this.style.color = '#107953';
+        rsvp_filter_state = true;
+        const events = collection(db, 'events');
+        const q = query(events, orderBy("DayTime", "asc"));
+        getDocs(q).then((snapshot => {
+            setupAttendingEvents(snapshot.docs, uid);
+        }))
+    }
+    else {
+        this.style.backgroundColor = '#E9DCF5';
+        this.style.color = '#5A5377';
+        rsvp_filter_state = false;
+        const events = collection(db, 'events');
+        const q = query(events, orderBy("DayTime", "asc"));
+        getDocs(q).then((snapshot => {
+            setupEvents(snapshot.docs, uid);
+        }))
+    }
+})
 }
 
 // listen for auth status changes
 auth.onAuthStateChanged(user => {
     if (user) {
-        if (document.getElementById('eventsList')) {
-
-        }
-        else if (document.getElementById('directory-container')) {
+        console.log(user);
+        if (document.getElementById('directory-container')) {
             const users = collection(db, 'users');
             const quer = query(users, orderBy("committee", "desc"));
             getDocs(quer).then((snapshot => {
@@ -35,15 +61,13 @@ auth.onAuthStateChanged(user => {
             }))
         }
         else if (document.getElementById('points-container')) {
-            console.log('In points-container if statement');
             setupPoints(user);
+        } else if (document.getElementById('rsvpedList')) {
+            setupProfile(user.uid);
         }
         uid = user.uid;
     } else {
-        console.log('user logged out');
-        if (document.getElementById('eventsList')) {
-        }
-        else if (document.getElementById('directory-container')) {
+        if (document.getElementById('directory-container')) {
             setupUsers(null);
         }
         else if (document.getElementById('points-container')) {
@@ -77,7 +101,8 @@ if (signup != null) {
                 email: em,
                 committee: commit,
                 chair: chr,
-                name: na
+                name: na,
+                attending: {}
             })
             .then(doc => {
                 window.location.href = "index.html";

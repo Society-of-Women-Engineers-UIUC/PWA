@@ -207,3 +207,38 @@ h6 {
     appearance: none;
     cursor: pointer;
 }
+
+#filterButtons {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.5%;
+}
+#filterButtons #favorite_filter {
+    padding: 0.625rem 0.75rem;
+    margin: 0rem 0.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    flex-shrink: 0;
+    border-radius: 0.375rem;
+    background: #E9DCF5;
+    border-style: none;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.1);
+    cursor: pointer;
+    color: #5A5377;
+}
+
+#filterButtons #rsvped_filter {
+    padding: 0.625rem 0.75rem;
+    margin: 0rem 0.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    flex-shrink: 0;
+    border-radius: 0.375rem;
+    background: #E9DCF5;
+    border-style: none;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.1);
+    cursor: pointer;
+    color: #5A5377;
+}
