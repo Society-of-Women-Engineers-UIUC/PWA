@@ -27,24 +27,32 @@ if (document.getElementById('eventsList')) {
 
     rsvp_filter.addEventListener('click', function() {
     if (!rsvp_filter_state) {
-        this.style.backgroundColor = '#DCF7E9';
-        this.style.color = '#107953';
-        rsvp_filter_state = true;
-        const events = collection(db, 'events');
-        const q = query(events, orderBy("DayTime", "asc"));
-        getDocs(q).then((snapshot => {
-            setupAttendingEvents(snapshot.docs, uid);
-        }))
+        if (uid != null) {
+            this.style.backgroundColor = '#DCF7E9';
+            this.style.color = '#107953';
+            rsvp_filter_state = true;
+            const events = collection(db, 'events');
+            const q = query(events, orderBy("DayTime", "asc"));
+            getDocs(q).then((snapshot => {
+                setupAttendingEvents(snapshot.docs, uid);
+            }))
+        } else {
+            alert("Login to filter by attending");
+        }
     }
     else {
-        this.style.backgroundColor = '#E9DCF5';
-        this.style.color = '#5A5377';
-        rsvp_filter_state = false;
-        const events = collection(db, 'events');
-        const q = query(events, orderBy("DayTime", "asc"));
-        getDocs(q).then((snapshot => {
-            setupEvents(snapshot.docs, uid);
-        }))
+        if (uid != null) {
+            this.style.backgroundColor = '#E9DCF5';
+            this.style.color = '#5A5377';
+            rsvp_filter_state = false;
+            const events = collection(db, 'events');
+            const q = query(events, orderBy("DayTime", "asc"));
+            getDocs(q).then((snapshot => {
+                setupEvents(snapshot.docs, uid);
+            }))
+        } else {
+            alert("Login to filter by attending");
+        }
     }
 })
 }
