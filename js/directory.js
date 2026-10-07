@@ -1,3 +1,4 @@
+console.log("At top of directory.js");
 const directoryContainer = document.getElementById("directory-container");
 
 export const setupUsers = (data) => {

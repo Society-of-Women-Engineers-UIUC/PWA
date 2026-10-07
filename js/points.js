@@ -1,3 +1,4 @@
+console.log("At top of points.js");
 const directoryContainer = document.getElementById("points-container");
 
 export const setupPoints = (user) => {

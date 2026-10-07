@@ -1,6 +1,8 @@
 import { db } from './firebase.js';
 import { doc, getDoc, getDocs, increment, collection, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
 
+console.log("At top of profile.js");
+
 const rsvpedConatiner = document.getElementById("rsvpedList");
 
 export const setupProfile = async (uid) => {

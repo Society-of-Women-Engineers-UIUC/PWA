@@ -1,6 +1,7 @@
 import { db } from './firebase.js';
 import { doc, updateDoc, getDocs, increment, collection, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
 
+console.log("At top of script.js");
 const eventsList = document.getElementById("eventsList");
 const loggedOutLinks = document.getElementsByClassName("logged-out");
 const loggedInLinks = document.getElementsByClassName("logged-in");
@@ -24,6 +25,7 @@ export const setupUI = (user) => {
 
 // setup events
 export const setupEvents = async (data, uid) => {
+    console.log("Running setup events");
     var html = '';
     const options = {
             month: 'short',
@@ -224,6 +226,7 @@ export const setupEvents = async (data, uid) => {
 }
 
 export const setupAttendingEvents = async (data, uid) => {
+    console.log("setupAttendingEvents");
     var html = '';
     const options = {
             month: 'short',
@@ -251,6 +254,184 @@ export const setupAttendingEvents = async (data, uid) => {
             
             if (curTime < eventTime) {
                 if (attending.includes(doc.id)) {
+                    eventCard = `
+                        <div class="event-cards">
+                            <div class="card">
+                                <div class="frame1">
+                                    <h4>${event.Title}</h4>
+                                    <div class="daytime">
+                                        <p class="daytimetext">${formattedTime}</p>
+                                    </div>
+                                </div>
+                                <div class="frame1">
+                                    <h6>${event.Committee}</h6>
+                                    <div class="far-right">
+                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                        <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                        <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            html += eventCard;
+        })
+        eventsList.innerHTML = html;
+
+        const rsvpbtns = document.getElementsByClassName("rsvpbtn");
+        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const locationbtns = document.getElementsByClassName("locationbtn");
+
+
+        for (const el of rsvpbtns) {
+            el.addEventListener('click', function() {
+                const check = document.createElement('i');
+                check.classList.add('fa-regular', 'fa-check', 'fa-lg');
+                const id = el.id;
+                const docRef = doc(db, "events", id);
+
+                if (this.innerHTML == "RSVP") {
+                    updateDoc(docRef, {
+                        attending: increment(1)
+                    });
+                    alert("You are RSVPed! Can't wait to see you there")
+                    this.style.backgroundColor = '#DCF7E9';
+                    this.style.color = '#107953';
+                    this.appendChild(check);
+
+                    const data = {
+
+                    };
+                    const userDocRef = doc(db, 'users', uid, 'attending', id);
+                   
+                    setDoc(userDocRef, data);
+                    
+                } else {
+                    updateDoc(docRef, {
+                        attending: increment(-1)
+                    });
+                    this.style.backgroundColor = '#E9DCF5';
+                    this.style.color = '#5A5377';
+                    alert("You have UnRSVPed");
+                    this.innerHTML = "RSVP";
+
+                    deleteDoc(doc(db, 'users', uid, 'attending', id));
+                }
+
+            });
+        }
+
+        for (const el of favoritebtns) {
+            el.addEventListener('click', function() {
+                // alert("Prent el =a" + el.parentElement);
+                alert("Favorite button pressed");
+                const star = document.createElement('i');
+                star.classList.add('fa-solid', 'fa-star', 'fa-lg');
+                
+            });
+        }
+
+        for (const el of locationbtns) {
+            el.addEventListener('click', function() {
+                // alert("Prent el =a" + el.parentElement);
+                alert("Location button pressed");
+            });
+        }
+    } else {
+        data.forEach( doc => {
+            const event = doc.data();
+            let eventTime = event.DayTime.toDate();
+            let formattedTime = formatter.format(eventTime);
+            
+            let curTime = new Date();
+            var eventCard = ``;
+
+            if (curTime < eventTime) {
+                eventCard = `
+                    <div class="event-cards">
+                        <div class="card">
+                            <div class="frame1">
+                                <h4>${event.Title}</h4>
+                                <div class="daytime">
+                                    <p class="daytimetext">${formattedTime}</p>
+                                </div>
+                            </div>
+                            <div class="frame1">
+                                <h6>${event.Committee}</h6>
+                                <div class="far-right">
+                                    <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                    <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                    <button class="rsvpbtn" id="${doc.id}">RSVP</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += eventCard;
+        })
+
+        eventsList.innerHTML = html;
+
+        const rsvpbtns = document.getElementsByClassName("rsvpbtn");
+        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const locationbtns = document.getElementsByClassName("locationbtn");
+
+
+        for (const el of rsvpbtns) {
+            el.addEventListener('click', function() {
+                alert('Login to RSVP');
+            });
+        }
+
+        for (const el of favoritebtns) {
+            el.addEventListener('click', function() {
+                // alert("Prent el =a" + el.parentElement);
+                alert("Login to favorite");
+            });
+        }
+
+        for (const el of locationbtns) {
+            el.addEventListener('click', function() {
+                // alert("Prent el =a" + el.parentElement);
+                alert("Location button pressed");
+            });
+        }
+    }
+}
+
+export const setupFavoriteEvents = async (data, uid) => {
+    var html = '';
+    const options = {
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+    const formatter = new Intl.DateTimeFormat(undefined, options);
+
+    // var attending = null;
+    if (uid != null) {
+        const at = collection(db, 'users', uid, 'favorites');
+        const aSnap =  await getDocs(at)
+        
+        const favorites = aSnap.docs.map(doc => doc.id);
+
+        data.forEach( doc => {
+            const event = doc.data();
+            var eventCard = ``;
+    
+            let eventTime = event.DayTime.toDate();
+            let formattedTime = formatter.format(eventTime);
+            
+            let curTime = new Date();
+            
+            if (curTime < eventTime) {
+                if (favorites.includes(doc.id)) {
                     eventCard = `
                         <div class="event-cards">
                             <div class="card">

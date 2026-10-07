@@ -10,13 +10,18 @@ import { setupPoints } from './points.js';
 import { setupProfile } from './profile.js';
 import { db, auth } from './firebase.js';
 
+console.log("At top of auth.js");
+
 var uid = null;
 
 const profileBody = document.getElementById("profileBody");
 
 
 const rsvp_filter = document.getElementById("rsvped_filter");
-var rsvp_filter_state = false
+var rsvp_filter_state = false;
+
+const favorite_filter = document.getElementById("fav_filter");
+var favorite_filter_state = false;
 
 if (document.getElementById('eventsList')) {
     const events = collection(db, 'events');
@@ -25,36 +30,73 @@ if (document.getElementById('eventsList')) {
         setupEvents(snapshot.docs, uid);
     }))
 
+
+    favorite_filter.addEventListener('click', function() {
+        console.log("Favorite button pressed");
+        if (!favorite_filter_state) {
+            if (uid != null) {
+                this.style.backgroundColor = '#DCF7E9';
+                this.style.color = '#107953';
+                favorite_filter_state = true;
+                const events = collection(db, 'events');
+                const q = query(events, orderBy("DayTime", "asc"));
+                getDocs(q).then((snapshot => {
+                    setupFavoriteEvents(snapshot.docs, uid);
+                }))
+            } else {
+                alert("Login to filter by favorites");
+            }
+        }
+        else {
+            if (uid != null) {
+                this.style.backgroundColor = '#E9DCF5';
+                this.style.color = '#5A5377';
+                favorite_filter_state = false;
+                const events = collection(db, 'events');
+                const q = query(events, orderBy("DayTime", "asc"));
+                getDocs(q).then((snapshot => {
+                    setupEvents(snapshot.docs, uid);
+                }))
+            } else {
+                alert("Login to filter by favorites");
+            }
+        }
+    })
+    
     rsvp_filter.addEventListener('click', function() {
-    if (!rsvp_filter_state) {
-        if (uid != null) {
-            this.style.backgroundColor = '#DCF7E9';
-            this.style.color = '#107953';
-            rsvp_filter_state = true;
-            const events = collection(db, 'events');
-            const q = query(events, orderBy("DayTime", "asc"));
-            getDocs(q).then((snapshot => {
-                setupAttendingEvents(snapshot.docs, uid);
-            }))
-        } else {
-            alert("Login to filter by attending");
+        console.log("RSVP Pressed");
+        if (!rsvp_filter_state) {
+            if (uid != null) {
+                this.style.backgroundColor = '#DCF7E9';
+                this.style.color = '#107953';
+                rsvp_filter_state = true;
+                const events = collection(db, 'events');
+                const q = query(events, orderBy("DayTime", "asc"));
+                getDocs(q).then((snapshot => {
+                    setupAttendingEvents(snapshot.docs, uid);
+                }))
+            } else {
+                alert("Login to filter by attending");
+            }
         }
-    }
-    else {
-        if (uid != null) {
-            this.style.backgroundColor = '#E9DCF5';
-            this.style.color = '#5A5377';
-            rsvp_filter_state = false;
-            const events = collection(db, 'events');
-            const q = query(events, orderBy("DayTime", "asc"));
-            getDocs(q).then((snapshot => {
-                setupEvents(snapshot.docs, uid);
-            }))
-        } else {
-            alert("Login to filter by attending");
+        else {
+            if (uid != null) {
+                this.style.backgroundColor = '#E9DCF5';
+                this.style.color = '#5A5377';
+                rsvp_filter_state = false;
+                const events = collection(db, 'events');
+                const q = query(events, orderBy("DayTime", "asc"));
+                console.log("Running setup events from last block");
+                getDocs(q).then((snapshot => {
+                    setupEvents(snapshot.docs, uid);
+                }))
+            } else {
+                alert("Login to filter by attending");
+            }
         }
-    }
-})
+    })
+
+
 }
 
 // listen for auth status changes
@@ -110,7 +152,8 @@ if (signup != null) {
                 committee: commit,
                 chair: chr,
                 name: na,
-                attending: {}
+                attending: {},
+                favorites: {}
             })
             .then(doc => {
                 window.location.href = "index.html";
