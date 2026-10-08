@@ -4,13 +4,11 @@ import {
     collection, getDocs, doc, setDoc, query, orderBy
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-import { setupEvents, setupAttendingEvents, setupUI } from './script.js';
+import { setupEvents, setupAttendingEvents, setupFavoriteEvents, setupUI } from './script.js';
 import { setupUsers } from './directory.js';
 import { setupPoints } from './points.js';
 import { setupProfile } from './profile.js';
 import { db, auth } from './firebase.js';
-
-console.log("At top of auth.js");
 
 var uid = null;
 
@@ -20,7 +18,7 @@ const profileBody = document.getElementById("profileBody");
 const rsvp_filter = document.getElementById("rsvped_filter");
 var rsvp_filter_state = false;
 
-const favorite_filter = document.getElementById("fav_filter");
+const favorite_filter = document.getElementById("favorite_filter");
 var favorite_filter_state = false;
 
 if (document.getElementById('eventsList')) {
@@ -32,8 +30,9 @@ if (document.getElementById('eventsList')) {
 
 
     favorite_filter.addEventListener('click', function() {
-        console.log("Favorite button pressed");
-        if (!favorite_filter_state) {
+        if (rsvp_filter_state) {
+            alert("Can only filter by favorite or attending");
+        } else if (!favorite_filter_state) {
             if (uid != null) {
                 this.style.backgroundColor = '#DCF7E9';
                 this.style.color = '#107953';
@@ -64,8 +63,9 @@ if (document.getElementById('eventsList')) {
     })
     
     rsvp_filter.addEventListener('click', function() {
-        console.log("RSVP Pressed");
-        if (!rsvp_filter_state) {
+        if (favorite_filter_state) {
+            alert("Can only filter by favorite or attending");
+        } else if (!rsvp_filter_state) {
             if (uid != null) {
                 this.style.backgroundColor = '#DCF7E9';
                 this.style.color = '#107953';
@@ -86,7 +86,6 @@ if (document.getElementById('eventsList')) {
                 rsvp_filter_state = false;
                 const events = collection(db, 'events');
                 const q = query(events, orderBy("DayTime", "asc"));
-                console.log("Running setup events from last block");
                 getDocs(q).then((snapshot => {
                     setupEvents(snapshot.docs, uid);
                 }))
@@ -167,7 +166,6 @@ if (logout != null) {
     logout.addEventListener('click', (e) => {
         e.preventDefault();
         auth.signOut().then(() => {
-            console.log("User logged out");
             window.location.href = "../index.html";
         })
     })
@@ -175,8 +173,6 @@ if (logout != null) {
 
 const login = document.getElementById("login");
 if (login != null) {
-    console.log("login not = null");
-
     login.addEventListener("click", function(event) {
     event.preventDefault();
 

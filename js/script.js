@@ -1,11 +1,11 @@
 import { db } from './firebase.js';
 import { doc, updateDoc, getDocs, increment, collection, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
 
-console.log("At top of script.js");
 const eventsList = document.getElementById("eventsList");
 const loggedOutLinks = document.getElementsByClassName("logged-out");
 const loggedInLinks = document.getElementsByClassName("logged-in");
 
+console.log("Updatedddd");
 
 export const setupUI = (user) => {
     if (user) {
@@ -25,7 +25,6 @@ export const setupUI = (user) => {
 
 // setup events
 export const setupEvents = async (data, uid) => {
-    console.log("Running setup events");
     var html = '';
     const options = {
             month: 'short',
@@ -37,10 +36,15 @@ export const setupEvents = async (data, uid) => {
 
     // var attending = null;
     if (uid != null) {
-        const at = collection(db, 'users', uid, 'attending');
+const at = collection(db, 'users', uid, 'favorites');
         const aSnap =  await getDocs(at)
         
-        const attending = aSnap.docs.map(doc => doc.id);
+        const favorites = aSnap.docs.map(doc => doc.id);
+
+        const at2 = collection(db, 'users', uid, 'attending');
+        const aSnap2 =  await getDocs(at2)
+        
+        const attending = aSnap2.docs.map(doc => doc.id);
 
         data.forEach( doc => {
             const event = doc.data();
@@ -52,7 +56,7 @@ export const setupEvents = async (data, uid) => {
             let curTime = new Date();
             
             if (curTime < eventTime) {
-                if (attending.includes(doc.id)) {
+                if (attending.includes(doc.id) && favorites.includes(doc.id)) {
                     eventCard = `
                         <div class="event-cards">
                             <div class="card">
@@ -66,7 +70,49 @@ export const setupEvents = async (data, uid) => {
                                     <h6>${event.Committee}</h6>
                                     <div class="far-right">
                                         <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                        <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                        <button class="favoritebtn" id="${doc.id}"><i class='fa-solid fa-star fa-lg'></i></button>
+                                        <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (favorites.includes(doc.id)) {
+                    eventCard = `
+                        <div class="event-cards">
+                            <div class="card">
+                                <div class="frame1">
+                                    <h4>${event.Title}</h4>
+                                    <div class="daytime">
+                                        <p class="daytimetext">${formattedTime}</p>
+                                    </div>
+                                </div>
+                                <div class="frame1">
+                                    <h6>${event.Committee}</h6>
+                                    <div class="far-right">
+                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                        <button class="favoritebtn"><i class="fa-solid fa-star fa-lg" id="${doc.id}"></i></button>
+                                        <button class="rsvpbtn" id="${doc.id}">RSVP</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (attending.includes(doc.id)) {
+                    eventCard = `
+                        <div class="event-cards">
+                            <div class="card">
+                                <div class="frame1">
+                                    <h4>${event.Title}</h4>
+                                    <div class="daytime">
+                                        <p class="daytimetext">${formattedTime}</p>
+                                    </div>
+                                </div>
+                                <div class="frame1">
+                                    <h6>${event.Committee}</h6>
+                                    <div class="far-right">
+                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                        <button class="favoritebtn" id="${doc.id}"><i class='fa-regular fa-star fa-lg'></i></button>
                                         <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
                                     </div>
                                 </div>
@@ -74,7 +120,6 @@ export const setupEvents = async (data, uid) => {
                         </div>
                     `;
                 } else {
-                    console.log(formattedTime);
                     eventCard = `
                         <div class="event-cards">
                             <div class="card">
@@ -88,7 +133,7 @@ export const setupEvents = async (data, uid) => {
                                     <h6>${event.Committee}</h6>
                                     <div class="far-right">
                                         <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                        <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                        <button class="favoritebtn"><i class="fa-regular fa-star fa-lg" id="${doc.id}"></i></button>
                                         <button class="rsvpbtn" id="${doc.id}">RSVP</button>
                                     </div>
                                 </div>
@@ -103,7 +148,7 @@ export const setupEvents = async (data, uid) => {
         eventsList.innerHTML = html;
 
         const rsvpbtns = document.getElementsByClassName("rsvpbtn");
-        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const favoritebtns = document.querySelectorAll(".fa-star");
         const locationbtns = document.getElementsByClassName("locationbtn");
 
 
@@ -148,10 +193,22 @@ export const setupEvents = async (data, uid) => {
         for (const el of favoritebtns) {
             el.addEventListener('click', function() {
                 // alert("Prent el =a" + el.parentElement);
-                alert("Favorite button pressed");
-                const star = document.createElement('i');
-                star.classList.add('fa-solid', 'fa-star', 'fa-lg');
-                
+                //alert("Favorite button pressed");
+                const classes = this.classList;
+                const id = el.id;
+                if (classes[0] == "fa-regular") {
+                    this.classList.replace("fa-regular", "fa-solid");
+                    const data = {
+
+                    };
+                    const userDocRef = doc(db, 'users', uid, 'favorites', id);
+                   
+                    setDoc(userDocRef, data);
+                } else {
+                    console.log("Star should be updated");
+                    this.classList.replace("fa-solid", "fa-regular");
+                    deleteDoc(doc(db, 'users', uid, 'favorites', id));
+                }
             });
         }
 
@@ -184,7 +241,7 @@ export const setupEvents = async (data, uid) => {
                                 <h6>${event.Committee}</h6>
                                 <div class="far-right">
                                     <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                    <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                    <button class="favoritebtn"><i class="fa-regular fa-star fa-lg" id="${doc.id}"></i></button>
                                     <button class="rsvpbtn" id="${doc.id}">RSVP</button>
                                 </div>
                             </div>
@@ -199,7 +256,7 @@ export const setupEvents = async (data, uid) => {
         eventsList.innerHTML = html;
 
         const rsvpbtns = document.getElementsByClassName("rsvpbtn");
-        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const favoritebtns = document.getElementsByClassName("fa-regular fa-star fa-lg");
         const locationbtns = document.getElementsByClassName("locationbtn");
 
 
@@ -226,7 +283,6 @@ export const setupEvents = async (data, uid) => {
 }
 
 export const setupAttendingEvents = async (data, uid) => {
-    console.log("setupAttendingEvents");
     var html = '';
     const options = {
             month: 'short',
@@ -238,10 +294,15 @@ export const setupAttendingEvents = async (data, uid) => {
 
     // var attending = null;
     if (uid != null) {
-        const at = collection(db, 'users', uid, 'attending');
+        const at = collection(db, 'users', uid, 'favorites');
         const aSnap =  await getDocs(at)
         
-        const attending = aSnap.docs.map(doc => doc.id);
+        const favorites = aSnap.docs.map(doc => doc.id);
+
+        const at2 = collection(db, 'users', uid, 'attending');
+        const aSnap2 =  await getDocs(at2)
+        
+        const attending = aSnap2.docs.map(doc => doc.id);
 
         data.forEach( doc => {
             const event = doc.data();
@@ -254,26 +315,49 @@ export const setupAttendingEvents = async (data, uid) => {
             
             if (curTime < eventTime) {
                 if (attending.includes(doc.id)) {
-                    eventCard = `
-                        <div class="event-cards">
-                            <div class="card">
-                                <div class="frame1">
-                                    <h4>${event.Title}</h4>
-                                    <div class="daytime">
-                                        <p class="daytimetext">${formattedTime}</p>
+                    if (favorites.includes(doc.id)) {
+                        eventCard = `
+                            <div class="event-cards">
+                                <div class="card">
+                                    <div class="frame1">
+                                        <h4>${event.Title}</h4>
+                                        <div class="daytime">
+                                            <p class="daytimetext">${formattedTime}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="frame1">
-                                    <h6>${event.Committee}</h6>
-                                    <div class="far-right">
-                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                        <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
-                                        <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                    <div class="frame1">
+                                        <h6>${event.Committee}</h6>
+                                        <div class="far-right">
+                                            <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                            <button class="favoritebtn"><i class="fa-solid fa-star fa-lg" id="${doc.id}"></i></button>
+                                            <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        eventCard = `
+                            <div class="event-cards">
+                                <div class="card">
+                                    <div class="frame1">
+                                        <h4>${event.Title}</h4>
+                                        <div class="daytime">
+                                            <p class="daytimetext">${formattedTime}</p>
+                                        </div>
+                                    </div>
+                                    <div class="frame1">
+                                        <h6>${event.Committee}</h6>
+                                        <div class="far-right">
+                                            <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                            <button class="favoritebtn"><i class="fa-regular fa-star fa-lg" id="${doc.id}"></i></button>
+                                            <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
             }
 
@@ -282,7 +366,7 @@ export const setupAttendingEvents = async (data, uid) => {
         eventsList.innerHTML = html;
 
         const rsvpbtns = document.getElementsByClassName("rsvpbtn");
-        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const favoritebtns = document.getElementsByClassName("fa-regular fa-star fa-lg");
         const locationbtns = document.getElementsByClassName("locationbtn");
 
 
@@ -327,10 +411,22 @@ export const setupAttendingEvents = async (data, uid) => {
         for (const el of favoritebtns) {
             el.addEventListener('click', function() {
                 // alert("Prent el =a" + el.parentElement);
-                alert("Favorite button pressed");
-                const star = document.createElement('i');
-                star.classList.add('fa-solid', 'fa-star', 'fa-lg');
-                
+                //alert("Favorite button pressed");
+                const classes = this.classList;
+                const id = el.id;
+                if (classes[0] == "fa-regular") {
+                    this.classList.replace("fa-regular", "fa-solid");
+                    const data = {
+
+                    };
+                    const userDocRef = doc(db, 'users', uid, 'favorites', id);
+                   
+                    setDoc(userDocRef, data);
+                } else {
+                    console.log("Star should be updated");
+                    this.classList.replace("fa-solid", "fa-regular");
+                    deleteDoc(doc(db, 'users', uid, 'favorites', id));
+                }
             });
         }
 
@@ -363,7 +459,7 @@ export const setupAttendingEvents = async (data, uid) => {
                                 <h6>${event.Committee}</h6>
                                 <div class="far-right">
                                     <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                    <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                    <button class="favoritebtn"><i class="fa-regular fa-star fa-lg" id="${doc.id}"></i></button>
                                     <button class="rsvpbtn" id="${doc.id}">RSVP</button>
                                 </div>
                             </div>
@@ -378,7 +474,7 @@ export const setupAttendingEvents = async (data, uid) => {
         eventsList.innerHTML = html;
 
         const rsvpbtns = document.getElementsByClassName("rsvpbtn");
-        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const favoritebtns = document.getElementsByClassName("fa-regular fa-star fa-lg");
         const locationbtns = document.getElementsByClassName("locationbtn");
 
 
@@ -421,6 +517,11 @@ export const setupFavoriteEvents = async (data, uid) => {
         
         const favorites = aSnap.docs.map(doc => doc.id);
 
+        const at2 = collection(db, 'users', uid, 'attending');
+        const aSnap2 =  await getDocs(at2)
+        
+        const attending = aSnap2.docs.map(doc => doc.id);
+
         data.forEach( doc => {
             const event = doc.data();
             var eventCard = ``;
@@ -432,26 +533,49 @@ export const setupFavoriteEvents = async (data, uid) => {
             
             if (curTime < eventTime) {
                 if (favorites.includes(doc.id)) {
-                    eventCard = `
-                        <div class="event-cards">
-                            <div class="card">
-                                <div class="frame1">
-                                    <h4>${event.Title}</h4>
-                                    <div class="daytime">
-                                        <p class="daytimetext">${formattedTime}</p>
+                    if (attending.includes(doc.id)) {
+                        eventCard = `
+                            <div class="event-cards">
+                                <div class="card">
+                                    <div class="frame1">
+                                        <h4>${event.Title}</h4>
+                                        <div class="daytime">
+                                            <p class="daytimetext">${formattedTime}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="frame1">
-                                    <h6>${event.Committee}</h6>
-                                    <div class="far-right">
-                                        <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                        <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
-                                        <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                    <div class="frame1">
+                                        <h6>${event.Committee}</h6>
+                                        <div class="far-right">
+                                            <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                            <button class="favoritebtn"><i class="fa-solid fa-star fa-lg" id="${doc.id}"></i></button>
+                                            <button class="rsvpbtn" id="${doc.id}" style="background: #DCF7E9; color: #107953;">RSVP <i class="fa-solid fa-check fa-lg"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        eventCard = `
+                            <div class="event-cards">
+                                <div class="card">
+                                    <div class="frame1">
+                                        <h4>${event.Title}</h4>
+                                        <div class="daytime">
+                                            <p class="daytimetext">${formattedTime}</p>
+                                        </div>
+                                    </div>
+                                    <div class="frame1">
+                                        <h6>${event.Committee}</h6>
+                                        <div class="far-right">
+                                            <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
+                                            <button class="favoritebtn"><i class="fa-solid fa-star fa-lg" id="${doc.id}"></i></button>
+                                            <button class="rsvpbtn" id="${doc.id}">RSVP</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
             }
 
@@ -460,7 +584,7 @@ export const setupFavoriteEvents = async (data, uid) => {
         eventsList.innerHTML = html;
 
         const rsvpbtns = document.getElementsByClassName("rsvpbtn");
-        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const favoritebtns = document.getElementsByClassName("fa-regular fa-star fa-lg");
         const locationbtns = document.getElementsByClassName("locationbtn");
 
 
@@ -505,10 +629,22 @@ export const setupFavoriteEvents = async (data, uid) => {
         for (const el of favoritebtns) {
             el.addEventListener('click', function() {
                 // alert("Prent el =a" + el.parentElement);
-                alert("Favorite button pressed");
-                const star = document.createElement('i');
-                star.classList.add('fa-solid', 'fa-star', 'fa-lg');
-                
+                //alert("Favorite button pressed");
+                const classes = this.classList;
+                const id = el.id;
+                if (classes[0] == "fa-regular") {
+                    this.classList.replace("fa-regular", "fa-solid");
+                    const data = {
+
+                    };
+                    const userDocRef = doc(db, 'users', uid, 'favorites', id);
+                   
+                    setDoc(userDocRef, data);
+                } else {
+                    console.log("Star should be updated");
+                    this.classList.replace("fa-solid", "fa-regular");
+                    deleteDoc(doc(db, 'users', uid, 'favorites', id));
+                }
             });
         }
 
@@ -541,7 +677,7 @@ export const setupFavoriteEvents = async (data, uid) => {
                                 <h6>${event.Committee}</h6>
                                 <div class="far-right">
                                     <button class="locationbtn"><i class="fa-solid fa-location-dot fa-lg"></i></button>
-                                    <button class="favoritebtn" id="${doc.id}"><i class="fa-regular fa-star fa-lg"></i></button>
+                                    <button class="favoritebtn"><i class="fa-regular fa-star fa-lg" id="${doc.id}"></i></button>
                                     <button class="rsvpbtn" id="${doc.id}">RSVP</button>
                                 </div>
                             </div>
@@ -556,7 +692,7 @@ export const setupFavoriteEvents = async (data, uid) => {
         eventsList.innerHTML = html;
 
         const rsvpbtns = document.getElementsByClassName("rsvpbtn");
-        const favoritebtns = document.getElementsByClassName("favoritebtn");
+        const favoritebtns = document.getElementsByClassName("fa-regular fa-star fa-lg");
         const locationbtns = document.getElementsByClassName("locationbtn");
 
 
